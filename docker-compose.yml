@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=speedtest
+      - POSTGRES_USER=speedtest_user
+      - POSTGRES_PASSWORD=changeme123
+    restart: unless-stopped
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U speedtest_user -d speedtest"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  speedtest:
+    build: ./speedtest
+    container_name: speedtest
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=speedtest
+      - DB_USER=speedtest_user
+      - DB_PASSWORD=changeme123
+      - TEST_INTERVAL=30
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+volumes:
+  postgres-data:
+  grafana-data:
+
+networks:
+  monitoring:
+    driver: bridge
