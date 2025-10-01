@@ -13,12 +13,12 @@ import psycopg2
 from datetime import datetime
 
 # Configuration from environment variables
-DB_HOST = os.getenv('DB_HOST', 'postgres')
-DB_PORT = os.getenv('DB_PORT', '5432')
-DB_NAME = os.getenv('DB_NAME', 'speedtest')
-DB_USER = os.getenv('DB_USER', 'speedtest_user')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-TEST_INTERVAL = int(os.getenv('TEST_INTERVAL', '30'))  # Minutes
+DB_HOST = os.getenv("DB_HOST", "postgres")
+DB_PORT = os.getenv("DB_PORT", "5432")
+DB_NAME = os.getenv("DB_NAME", "speedtest")
+DB_USER = os.getenv("DB_USER", "speedtest_user")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+TEST_INTERVAL = int(os.getenv("TEST_INTERVAL", "30"))  # Minutes
 
 # Validate configuration
 if not DB_PASSWORD:
@@ -27,6 +27,7 @@ if not DB_PASSWORD:
 
 # Database connection
 db_conn = None
+
 
 def init_database():
     """Initialize database connection and create table if needed"""
@@ -37,7 +38,7 @@ def init_database():
             port=DB_PORT,
             database=DB_NAME,
             user=DB_USER,
-            password=DB_PASSWORD
+            password=DB_PASSWORD,
         )
         print(f"Connected to PostgreSQL at {DB_HOST}:{DB_PORT}/{DB_NAME}")
 
@@ -68,7 +69,7 @@ def init_database():
 
 def run_speedtest():
     """Execute a speed test and write results to PostgreSQL"""
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"\n{'='*50}")
     print(f"Running speed test at {timestamp}")
     print(f"{'='*50}")
@@ -99,34 +100,37 @@ def run_speedtest():
 
         # Run upload test
         print("Testing upload speed...")
-        upload_speed = st.upload() / 1_000_000      # Convert to Mbps
+        upload_speed = st.upload() / 1_000_000  # Convert to Mbps
 
         # Get ping
         ping = st.results.ping
 
         # Display results
-        print(f"\nResults:")
+        print("\nResults:")
         print(f"  Download: {download_speed:.2f} Mbps")
         print(f"  Upload:   {upload_speed:.2f} Mbps")
         print(f"  Ping:     {ping:.2f} ms")
 
         # Insert into PostgreSQL
         with db_conn.cursor() as cursor:
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO speed_tests
                 (download_mbps, upload_mbps, ping_ms, server_name, server_location, server_sponsor)
                 VALUES (%s, %s, %s, %s, %s, %s)
-            """, (
-                round(download_speed, 2),
-                round(upload_speed, 2),
-                round(ping, 2),
-                server_info['name'],
-                f"{server_info['name']}, {server_info['country']}",
-                server_info['sponsor']
-            ))
+            """,
+                (
+                    round(download_speed, 2),
+                    round(upload_speed, 2),
+                    round(ping, 2),
+                    server_info["name"],
+                    f"{server_info['name']}, {server_info['country']}",
+                    server_info["sponsor"],
+                ),
+            )
             db_conn.commit()
 
-        print(f"✓ Data written to PostgreSQL successfully")
+        print("✓ Data written to PostgreSQL successfully")
 
     except speedtest.ConfigRetrievalError as e:
         print(f"ERROR: Failed to retrieve speed test configuration: {e}")
@@ -137,13 +141,13 @@ def run_speedtest():
 
 def main():
     """Main application loop"""
-    print("="*50)
+    print("=" * 50)
     print("Internet Speed Test Monitor")
-    print("="*50)
+    print("=" * 50)
     print(f"Test interval: Every {TEST_INTERVAL} minutes")
     print(f"PostgreSQL: {DB_HOST}:{DB_PORT}/{DB_NAME}")
     print(f"User: {DB_USER}")
-    print("="*50)
+    print("=" * 50)
 
     # Initialize database
     init_database()
@@ -155,7 +159,7 @@ def main():
     # Schedule periodic tests
     schedule.every(TEST_INTERVAL).minutes.do(run_speedtest)
 
-    print(f"\n✓ Speed test monitor started")
+    print("\n✓ Speed test monitor started")
     print(f"Next test in {TEST_INTERVAL} minutes...")
 
     # Run scheduler

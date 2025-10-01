@@ -1,0 +1,92 @@
+# Pre-commit configuration for Internet Connectivity Monitoring System
+# Ensures code quality and consistency before commits
+
+# Skip certain checks for specific file types
+exclude: |
+  (?x)^(
+      results/.*|
+      \.git/.*|
+      \.pre-commit-config\.yaml$
+  )$
+
+repos:
+  # General repository hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      # File hygiene
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+
+      # Security and best practices
+      - id: detect-private-key
+      - id: check-ast
+      - id: check-docstring-first
+
+  # Python linting and formatting with Ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.0
+    hooks:
+      - id: ruff
+        args: ['--fix']
+      - id: ruff-format
+
+  # Shell script linting and formatting
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.11.0
+    hooks:
+      - id: shellcheck
+        args: ['--severity=warning']
+        exclude: |
+          (?x)^(
+              results/.*|
+              \.git/.*
+          )$
+
+  # Shell script formatting
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.12.0-2
+    hooks:
+      - id: shfmt
+        args: ['-i', '2', '-ci']
+        exclude: |
+          (?x)^(
+              results/.*|
+              \.git/.*
+          )$
+
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+    - id: markdownlint
+      args:
+      - --fix
+      - --config
+      - .markdownlint.json
+      verbose: true
+      entry: bash -c 'markdownlint "$@" || true' --
+
+  # Custom hooks for this project
+  - repo: local
+    hooks:
+      # Check if Makefile targets are valid
+      - id: makefile-check
+        name: Makefile syntax check
+        entry: make -n help
+        language: system
+        pass_filenames: false
+        files: Makefile
+
+      # Basic bash syntax check
+      - id: bash-syntax
+        name: Bash syntax check
+        entry: bash -n
+        language: system
+        types: [shell]

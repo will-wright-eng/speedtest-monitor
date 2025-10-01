@@ -38,20 +38,20 @@
               "axisPlacement": "auto",
               "barAlignment": 0,
               "drawStyle": "line",
-              "fillOpacity": 10,
+              "fillOpacity": 20,
               "gradientMode": "none",
               "hideFrom": {
                 "legend": false,
                 "tooltip": false,
                 "vis": false
               },
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
+              "lineInterpolation": "smooth",
+              "lineWidth": 2,
               "pointSize": 5,
               "scaleDistribution": {
                 "type": "linear"
               },
-              "showPoints": "never",
+              "showPoints": "always",
               "spanNulls": false,
               "stacking": {
                 "group": "A",
@@ -81,21 +81,6 @@
             {
               "matcher": {
                 "id": "byName",
-                "options": "Upload Speed"
-              },
-              "properties": [
-                {
-                  "id": "color",
-                  "value": {
-                    "mode": "fixed",
-                    "fixedColor": "blue"
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
                 "options": "Download Speed"
               },
               "properties": [
@@ -105,6 +90,29 @@
                     "mode": "fixed",
                     "fixedColor": "green"
                   }
+                },
+                {
+                  "id": "custom.lineWidth",
+                  "value": 3
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Upload Speed"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "blue"
+                  }
+                },
+                {
+                  "id": "custom.lineWidth",
+                  "value": 3
                 }
               ]
             }
@@ -119,12 +127,15 @@
         "id": 1,
         "options": {
           "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom"
+            "calcs": ["lastNotNull", "max", "min", "mean"],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "width": 200
           },
           "tooltip": {
-            "mode": "single"
+            "mode": "multi",
+            "sort": "none"
           }
         },
         "targets": [
@@ -142,9 +153,7 @@
             "select": [
               [
                 {
-                  "params": [
-                    "value"
-                  ],
+                  "params": ["value"],
                   "type": "column"
                 }
               ]
@@ -174,9 +183,7 @@
             "select": [
               [
                 {
-                  "params": [
-                    "value"
-                  ],
+                  "params": ["value"],
                   "type": "column"
                 }
               ]
@@ -193,7 +200,7 @@
             ]
           }
         ],
-        "title": "Internet Speed Over Time",
+        "title": "📊 Internet Speed Performance",
         "type": "timeseries"
       },
       {
@@ -219,12 +226,12 @@
                 "vis": false
               },
               "lineInterpolation": "linear",
-              "lineWidth": 1,
+              "lineWidth": 2,
               "pointSize": 5,
               "scaleDistribution": {
                 "type": "linear"
               },
-              "showPoints": "never",
+              "showPoints": "always",
               "spanNulls": false,
               "stacking": {
                 "group": "A",
@@ -243,14 +250,38 @@
                   "value": null
                 },
                 {
+                  "color": "yellow",
+                  "value": 10
+                },
+                {
                   "color": "red",
-                  "value": 80
+                  "value": 50
                 }
               ]
             },
             "unit": "ms"
           },
-          "overrides": []
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Ping Latency"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "orange"
+                  }
+                },
+                {
+                  "id": "custom.lineWidth",
+                  "value": 3
+                }
+              ]
+            }
+          ]
         },
         "gridPos": {
           "h": 8,
@@ -261,12 +292,14 @@
         "id": 2,
         "options": {
           "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom"
+            "calcs": ["lastNotNull", "max", "min", "mean"],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
           },
           "tooltip": {
-            "mode": "single"
+            "mode": "single",
+            "sort": "none"
           }
         },
         "targets": [
@@ -284,9 +317,7 @@
             "select": [
               [
                 {
-                  "params": [
-                    "value"
-                  ],
+                  "params": ["value"],
                   "type": "column"
                 }
               ]
@@ -303,7 +334,7 @@
             ]
           }
         ],
-        "title": "Ping Latency Over Time",
+        "title": "⚡ Ping Latency",
         "type": "timeseries"
       },
       {
@@ -325,8 +356,12 @@
                   "value": null
                 },
                 {
+                  "color": "yellow",
+                  "value": 500
+                },
+                {
                   "color": "red",
-                  "value": 80
+                  "value": 200
                 }
               ]
             },
@@ -344,12 +379,10 @@
         "options": {
           "colorMode": "value",
           "graphMode": "area",
-          "justifyMode": "auto",
+          "justifyMode": "center",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -372,9 +405,7 @@
             "select": [
               [
                 {
-                  "params": [
-                    "value"
-                  ],
+                  "params": ["value"],
                   "type": "column"
                 }
               ]
@@ -391,95 +422,7 @@
             ]
           }
         ],
-        "title": "Current Download Speed",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "postgres"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "Mbps"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 4,
-          "w": 6,
-          "x": 6,
-          "y": 8
-        },
-        "id": 4,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "auto",
-          "wideLayout": true
-        },
-        "pluginVersion": "9.0.0",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "postgres"
-            },
-            "format": "time_series",
-            "group": [],
-            "metricColumn": "none",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  timestamp AS \"time\",\n  upload_mbps\nFROM speed_tests\nWHERE $__timeFilter(timestamp)\nORDER BY timestamp DESC\nLIMIT 1",
-            "refId": "A",
-            "select": [
-              [
-                {
-                  "params": [
-                    "value"
-                  ],
-                  "type": "column"
-                }
-              ]
-            ],
-            "table": "speed_tests",
-            "timeColumn": "timestamp",
-            "timeColumnType": "timestamp",
-            "where": [
-              {
-                "name": "$__timeFilter",
-                "params": [],
-                "type": "macro"
-              }
-            ]
-          }
-        ],
-        "title": "Current Upload Speed",
+        "title": "📥 Current Download",
         "type": "stat"
       },
       {
@@ -502,11 +445,99 @@
                 },
                 {
                   "color": "yellow",
-                  "value": 50
+                  "value": 500
                 },
                 {
                   "color": "red",
-                  "value": 100
+                  "value": 200
+                }
+              ]
+            },
+            "unit": "Mbps"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 8
+        },
+        "id": 4,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": ["lastNotNull"],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "9.0.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "postgres"
+            },
+            "format": "time_series",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  timestamp AS \"time\",\n  upload_mbps\nFROM speed_tests\nWHERE $__timeFilter(timestamp)\nORDER BY timestamp DESC\nLIMIT 1",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": ["value"],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "speed_tests",
+            "timeColumn": "timestamp",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "📤 Current Upload",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "postgres"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 10
+                },
+                {
+                  "color": "red",
+                  "value": 50
                 }
               ]
             },
@@ -524,12 +555,10 @@
         "options": {
           "colorMode": "value",
           "graphMode": "area",
-          "justifyMode": "auto",
+          "justifyMode": "center",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -552,9 +581,7 @@
             "select": [
               [
                 {
-                  "params": [
-                    "value"
-                  ],
+                  "params": ["value"],
                   "type": "column"
                 }
               ]
@@ -571,7 +598,7 @@
             ]
           }
         ],
-        "title": "Current Ping",
+        "title": "🏓 Current Ping",
         "type": "stat"
       },
       {
@@ -591,10 +618,6 @@
                 {
                   "color": "green",
                   "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
                 }
               ]
             },
@@ -612,12 +635,10 @@
         "options": {
           "colorMode": "value",
           "graphMode": "area",
-          "justifyMode": "auto",
+          "justifyMode": "center",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -640,9 +661,7 @@
             "select": [
               [
                 {
-                  "params": [
-                    "value"
-                  ],
+                  "params": ["value"],
                   "type": "column"
                 }
               ]
@@ -659,7 +678,7 @@
             ]
           }
         ],
-        "title": "Total Tests",
+        "title": "📊 Total Tests",
         "type": "stat"
       },
       {
@@ -701,6 +720,26 @@
                 {
                   "id": "unit",
                   "value": "Mbps"
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-background",
+                    "thresholds": [
+                      {
+                        "color": "green",
+                        "value": 500
+                      },
+                      {
+                        "color": "yellow",
+                        "value": 200
+                      },
+                      {
+                        "color": "red",
+                        "value": 0
+                      }
+                    ]
+                  }
                 }
               ]
             },
@@ -713,6 +752,26 @@
                 {
                   "id": "unit",
                   "value": "Mbps"
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-background",
+                    "thresholds": [
+                      {
+                        "color": "green",
+                        "value": 500
+                      },
+                      {
+                        "color": "yellow",
+                        "value": 200
+                      },
+                      {
+                        "color": "red",
+                        "value": 0
+                      }
+                    ]
+                  }
                 }
               ]
             },
@@ -725,6 +784,26 @@
                 {
                   "id": "unit",
                   "value": "ms"
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-background",
+                    "thresholds": [
+                      {
+                        "color": "green",
+                        "value": 0
+                      },
+                      {
+                        "color": "yellow",
+                        "value": 10
+                      },
+                      {
+                        "color": "red",
+                        "value": 50
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -732,7 +811,7 @@
         },
         "gridPos": {
           "h": 8,
-          "w": 24,
+          "w": 12,
           "x": 0,
           "y": 12
         },
@@ -742,12 +821,16 @@
           "footer": {
             "countRows": false,
             "fields": "",
-            "reducer": [
-              "sum"
-            ],
+            "reducer": ["sum"],
             "show": false
           },
-          "showHeader": true
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "timestamp"
+            }
+          ]
         },
         "pluginVersion": "9.0.0",
         "targets": [
@@ -760,14 +843,12 @@
             "group": [],
             "metricColumn": "none",
             "rawQuery": true,
-            "rawSql": "SELECT\n  timestamp,\n  download_mbps,\n  upload_mbps,\n  ping_ms,\n  server_sponsor,\n  server_location\nFROM speed_tests\nWHERE $__timeFilter(timestamp)\nORDER BY timestamp DESC\nLIMIT 20",
+            "rawSql": "SELECT\n  timestamp,\n  download_mbps,\n  upload_mbps,\n  ping_ms,\n  server_sponsor,\n  server_location,\n  server_name\nFROM speed_tests\nWHERE $__timeFilter(timestamp)\nORDER BY timestamp DESC\nLIMIT 50",
             "refId": "A",
             "select": [
               [
                 {
-                  "params": [
-                    "value"
-                  ],
+                  "params": ["value"],
                   "type": "column"
                 }
               ]
@@ -784,8 +865,88 @@
             ]
           }
         ],
-        "title": "Recent Speed Tests",
+        "title": "📋 Recent Speed Tests",
         "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "postgres"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "vis": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 12
+        },
+        "id": 8,
+        "options": {
+          "legend": {
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": ["lastNotNull"],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "postgres"
+            },
+            "format": "table",
+            "group": [],
+            "metricColumn": "none",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  server_sponsor as \"Server Provider\",\n  COUNT(*) as \"Test Count\"\nFROM speed_tests\nWHERE $__timeFilter(timestamp)\nGROUP BY server_sponsor\nORDER BY COUNT(*) DESC",
+            "refId": "A",
+            "select": [
+              [
+                {
+                  "params": ["value"],
+                  "type": "column"
+                }
+              ]
+            ],
+            "table": "speed_tests",
+            "timeColumn": "timestamp",
+            "timeColumnType": "timestamp",
+            "where": [
+              {
+                "name": "$__timeFilter",
+                "params": [],
+                "type": "macro"
+              }
+            ]
+          }
+        ],
+        "title": "🏢 Server Distribution",
+        "type": "piechart"
       }
     ],
     "refresh": "30s",
@@ -793,7 +954,8 @@
     "style": "dark",
     "tags": [
       "speedtest",
-      "monitoring"
+      "monitoring",
+      "enhanced"
     ],
     "templating": {
       "list": []
@@ -804,8 +966,8 @@
     },
     "timepicker": {},
     "timezone": "",
-    "title": "Speed Test Monitor",
-    "uid": "speedtest-monitor",
+    "title": "🚀 Enhanced Speed Test Monitor",
+    "uid": "enhanced-speedtest-monitor",
     "version": 1,
     "weekStart": ""
   }

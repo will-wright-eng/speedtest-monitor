@@ -38,6 +38,7 @@ This document outlines the design and implementation of an automated internet sp
 ### Component Details
 
 #### 1. Speed Test Monitor
+
 - **Technology**: Python 3.11
 - **Key Libraries**:
   - `speedtest-cli`: Executes internet speed tests
@@ -50,6 +51,7 @@ This document outlines the design and implementation of an automated internet sp
   - Stores results in PostgreSQL database
 
 #### 2. PostgreSQL
+
 - **Version**: PostgreSQL 16
 - **Purpose**: Relational database for storing speed test metrics
 - **Deployment**: Docker container
@@ -60,6 +62,7 @@ This document outlines the design and implementation of an automated internet sp
   - Password-based authentication
 
 #### 3. Grafana
+
 - **Version**: Latest stable
 - **Purpose**: Data visualization and dashboard interface
 - **Deployment**: Docker container
@@ -77,6 +80,7 @@ This document outlines the design and implementation of an automated internet sp
 **Table Name**: `speed_tests`
 
 **Columns**:
+
 - `id` (SERIAL PRIMARY KEY): Auto-incrementing unique identifier
 - `timestamp` (TIMESTAMP WITH TIME ZONE): Test execution time (default: NOW())
 - `download_mbps` (NUMERIC(10,2)): Download speed in megabits per second
@@ -87,6 +91,7 @@ This document outlines the design and implementation of an automated internet sp
 - `server_sponsor` (VARCHAR(255)): Server sponsor/ISP
 
 **Indexes**:
+
 - Primary key on `id`
 - Index on `timestamp` for efficient time-based queries
 
@@ -146,11 +151,13 @@ Two Docker volumes ensure data persistence:
 ### Environment Variables
 
 **PostgreSQL Container**:
+
 - `POSTGRES_DB`: Database name (default: `speedtest`)
 - `POSTGRES_USER`: Database user (default: `speedtest_user`)
 - `POSTGRES_PASSWORD`: User password
 
 **Speedtest Container**:
+
 - `DB_HOST`: PostgreSQL host (default: `postgres`)
 - `DB_PORT`: PostgreSQL port (default: `5432`)
 - `DB_NAME`: Database name
@@ -159,6 +166,7 @@ Two Docker volumes ensure data persistence:
 - `TEST_INTERVAL`: Minutes between tests (default: `30`)
 
 **Grafana Container**:
+
 - `GF_SECURITY_ADMIN_PASSWORD`: Initial admin password
 
 ### Customizable Parameters
@@ -290,18 +298,21 @@ docker-compose up -d
 ### Common Issues
 
 **Speedtest container repeatedly failing**:
+
 - Check network connectivity from container
 - Verify PostgreSQL is accessible: `docker-compose exec speedtest ping postgres`
 - Review container logs: `docker-compose logs speedtest`
 - Check database credentials match in environment variables
 
 **No data appearing in Grafana**:
+
 - Verify PostgreSQL data source configuration in Grafana
 - Check that speedtest is writing data: `docker-compose logs speedtest`
 - Verify database name and credentials match
 - Test direct database query: `docker-compose exec postgres psql -U speedtest_user -d speedtest -c "SELECT COUNT(*) FROM speed_tests;"`
 
 **High resource usage**:
+
 - Reduce test frequency via `TEST_INTERVAL` environment variable
 - Implement periodic data cleanup: Delete records older than X months
 - Add table partitioning for better performance with large datasets
@@ -493,7 +504,7 @@ def init_database():
             password=DB_PASSWORD
         )
         print(f"Connected to PostgreSQL at {DB_HOST}:{DB_PORT}/{DB_NAME}")
-        
+
         # Create table if it doesn't exist
         with db_conn.cursor() as cursor:
             cursor.execute("""
@@ -509,7 +520,7 @@ def init_database():
                 )
             """)
             cursor.execute("""
-                CREATE INDEX IF NOT EXISTS idx_speed_tests_timestamp 
+                CREATE INDEX IF NOT EXISTS idx_speed_tests_timestamp
                 ON speed_tests(timestamp DESC)
             """)
             db_conn.commit()
@@ -556,7 +567,7 @@ def run_speedtest():
         # Insert into PostgreSQL
         with db_conn.cursor() as cursor:
             cursor.execute("""
-                INSERT INTO speed_tests 
+                INSERT INTO speed_tests
                 (download_mbps, upload_mbps, ping_ms, server_name, server_location, server_sponsor)
                 VALUES (%s, %s, %s, %s, %s, %s)
             """, (
@@ -568,7 +579,7 @@ def run_speedtest():
                 server_info['sponsor']
             ))
             db_conn.commit()
-        
+
         print(f"✓ Data written to PostgreSQL successfully")
 
     except speedtest.ConfigRetrievalError as e:
@@ -650,6 +661,7 @@ Automated internet speed monitoring system using Grafana and PostgreSQL on Raspb
    ```bash
    docker-compose up -d
    ```
+
 4. Access Grafana at `http://your-pi-ip:3000` (admin/admin)
 5. Configure PostgreSQL data source in Grafana
 6. Create your dashboard
@@ -686,6 +698,7 @@ docker-compose exec postgres psql -U speedtest_user -d speedtest
 ## Data Source Configuration
 
 In Grafana, add PostgreSQL data source with:
+
 - Host: `postgres:5432`
 - Database: `speedtest`
 - User: `speedtest_user`
@@ -695,6 +708,7 @@ In Grafana, add PostgreSQL data source with:
 ## Customization
 
 Edit `TEST_INTERVAL` in docker-compose.yml to change test frequency.
+
 ```
 
 ## Installation Steps
@@ -719,6 +733,7 @@ chmod +x speedtest/speedtest_monitor.py
 ### Step 4: Update Credentials
 
 Edit `docker-compose.yml` and change:
+
 - `POSTGRES_PASSWORD`
 - `DB_PASSWORD` (must match POSTGRES_PASSWORD)
 - `GF_SECURITY_ADMIN_PASSWORD`

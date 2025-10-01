@@ -7,9 +7,11 @@ Automated internet speed monitoring system using Grafana and PostgreSQL on Raspb
 1. Clone or create the project directory structure
 2. Update credentials in `docker-compose.yml` if needed
 3. Start the stack:
+
    ```bash
    docker-compose up -d
    ```
+
 4. Access Grafana at `http://your-pi-ip:3000` (admin/admin)
 5. Configure PostgreSQL data source in Grafana
 6. Create your dashboard
@@ -76,6 +78,7 @@ docker-compose exec postgres psql -U speedtest_user -d speedtest
 ## Data Source Configuration
 
 In Grafana, add PostgreSQL data source with:
+
 - Host: `postgres:5432`
 - Database: `speedtest`
 - User: `speedtest_user`
@@ -87,6 +90,7 @@ In Grafana, add PostgreSQL data source with:
 The project includes a comprehensive Makefile with convenient commands:
 
 ### Basic Operations
+
 - `make help` - Show all available commands
 - `make setup` - Initial setup (copy .env.example and start services)
 - `make up` - Start all services
@@ -94,22 +98,26 @@ The project includes a comprehensive Makefile with convenient commands:
 - `make restart` - Restart all services
 
 ### Monitoring
+
 - `make logs` - View logs from all services
 - `make logs-speedtest` - View speedtest logs only
 - `make status` - Show container status
 - `make health` - Check service health
 
 ### Development
+
 - `make build` - Build the speedtest container
 - `make test` - Run a single speed test manually
 - `make shell-speedtest` - Open shell in speedtest container
 
 ### Data Management
+
 - `make backup` - Backup all persistent data
 - `make restore-postgres BACKUP_FILE=filename.tar.gz` - Restore PostgreSQL
 - `make restore-grafana BACKUP_FILE=filename.tar.gz` - Restore Grafana
 
 ### Maintenance
+
 - `make update` - Pull latest images and restart
 - `make clean` - Remove all containers and data (WARNING: destructive)
 - `make urls` - Show service URLs
@@ -140,6 +148,7 @@ chmod +x speedtest/speedtest_monitor.py
 ### Step 4: Update Credentials
 
 Edit `docker-compose.yml` and change:
+
 - `POSTGRES_PASSWORD`
 - `DB_PASSWORD` (must match POSTGRES_PASSWORD)
 - `GF_SECURITY_ADMIN_PASSWORD`
@@ -238,18 +247,21 @@ LIMIT 1
 ### Common Issues
 
 **Speedtest container repeatedly failing**:
+
 - Check network connectivity from container
 - Verify PostgreSQL is accessible: `docker-compose exec speedtest ping postgres`
 - Review container logs: `docker-compose logs speedtest`
 - Check database credentials match in environment variables
 
 **No data appearing in Grafana**:
+
 - Verify PostgreSQL data source configuration in Grafana
 - Check that speedtest is writing data: `docker-compose logs speedtest`
 - Verify database name and credentials match
 - Test direct database query: `docker-compose exec postgres psql -U speedtest_user -d speedtest -c "SELECT COUNT(*) FROM speed_tests;"`
 
 **High resource usage**:
+
 - Reduce test frequency via `TEST_INTERVAL` environment variable
 - Implement periodic data cleanup: Delete records older than X months
 - Add table partitioning for better performance with large datasets
