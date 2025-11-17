@@ -2,6 +2,11 @@ services:
   postgres:
     image: postgres:16
     container_name: postgres
+    labels:
+      - mdns.enable=true
+      - mdns.name=postgres
+      - mdns.type=_postgresql._tcp
+      - mdns.domain=local.
     ports:
       - "5432:5432"
     volumes:
@@ -22,6 +27,11 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    labels:
+      - mdns.enable=true
+      - mdns.name=grafana
+      - mdns.type=_http._tcp
+      - mdns.domain=local.
     ports:
       - "3000:3000"
     volumes:
@@ -39,6 +49,13 @@ services:
   speedtest:
     build: ./speedtest
     container_name: speedtest
+    labels:
+      - mdns.enable=true
+      - mdns.name=speedtest
+      - mdns.type=_http._tcp
+      - mdns.domain=local.
+      # optional TXT data:
+      - mdns.txt.path=/results
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
